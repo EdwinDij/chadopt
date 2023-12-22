@@ -14,17 +14,28 @@ export const createCat = async (req, res) => {
     userId,
   } = req.body;
 
-  Cat.create({
-    name,
-    birthday,
-    description,
-    sexe,
-    city,
-    picture,
-    race,
-    isAdopted,
-  });
-    res.status(201).json({ message: "Cat created" });
+  try {
+    if (req.user.isAdmin) {
+      const cat = await Cat.create({
+        name,
+        birthday,
+        description,
+        sexe,
+        city,
+        picture,
+        race,
+        isAdopted,
+      });
+
+      res.status(201).json({ message: "Cat created", cat });
+    } else {
+      res
+        .status(403)
+        .json({ message: "You are not authorized to create a cat" });
+    }
+  } catch (error) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 };
 
 export const getAllCats = async (req, res) => {

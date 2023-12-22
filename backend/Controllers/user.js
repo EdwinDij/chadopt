@@ -43,9 +43,13 @@ export const login = async (req, res) => {
             userId: user.id,
             username: user.username,
             isAdmin: user.isAdmin,
-            token: jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
-              expiresIn: "24h",
-            }),
+            token: jwt.sign(
+              { userId: user.id, isAdmin: user.isAdmin },
+              process.env.JWT_SECRET,
+              {
+                expiresIn: "24h",
+              }
+            ),
           });
         })
         .catch((error) => {
