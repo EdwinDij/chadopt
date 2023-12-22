@@ -4,6 +4,8 @@ import helmet from "helmet";
 import { config } from "dotenv";
 config();
 
+import { sequelize } from "../config/database.js";
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -28,6 +30,13 @@ app.use((req, res, next) => {
 app.get("/", (req, res) => {
   res.send("Hello from server!");
 });
+
+try {
+  sequelize.authenticate();
+  console.log("Connection has been established successfully.");
+} catch (error) {
+  console.error("Unable to connect to the database:", error);
+}
 
 app.listen(
   PORT,
