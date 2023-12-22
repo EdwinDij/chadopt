@@ -1,6 +1,6 @@
 import { Sequelize, Model, DataTypes } from "sequelize";
 import { sequelize } from "../config/database.js";
-import {User} from "./user.js";
+import { User } from "./user.js";
 
 export const Cat = sequelize.define("cat", {
   id: {

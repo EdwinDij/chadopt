@@ -50,5 +50,6 @@ app.listen(
 //routes
 
 app.use("/auth/user", userRoutes);
+app.use("/cat", catRoutes);
 
 export default app;
