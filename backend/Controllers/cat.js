@@ -113,3 +113,43 @@ export const adoptCat = async (req, res) => {
     res.status(400).json({ error });
   }
 };
+
+export const getAdoptedCats = async (req, res) => {
+  try {
+    const cats = await Cat.findAll({ where: { isAdopted: true } });
+    res.status(200).json(cats);
+  } catch (error) {
+    res.status(400).json({ error });
+  }
+};
+
+export const addToFavorites = async (req, res) => {
+  try {
+    const cat = await Cat.findOne({ where: { id: req.params.id } });
+    const user = await User.findOne({ where: { id: req.user.id } });
+    if (req.user) {
+      const isCatInFavorites = user.favoriteCats.includes(cat.id);
+      //si le chat est déjà dans les favoris de l'utilisateur alors on le retire
+      if (isCatInFavorites) {
+        user.favoriteCats = user.favoriteCats.filter(
+          (favoriteCat) => favoriteCat !== cat.id
+        );
+        return res
+          .status(400)
+          .json({ message: "Cat is no longer in favorite" });
+      }
+
+      // Ajouter le chat aux favoris de l'utilisateur
+      user.favoriteCats.push(cat.id);
+
+      // Mettre à jour l'utilisateur avec les nouveaux favoris
+      await user.save();
+
+      res.status(200).json({ message: "Cat added to favorites", user });
+    } else {
+      res.status(400).json({ message: "Vous devez être connecté" });
+    }
+  } catch (error) {
+    res.status(400).json({ error });
+  }
+};
