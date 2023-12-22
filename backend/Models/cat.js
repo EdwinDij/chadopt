@@ -8,7 +8,7 @@ export const Cat = sequelize.define("cat", {
     defaultValue: Sequelize.UUIDV4,
     primaryKey: true,
   },
-  
+
   name: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -49,6 +49,11 @@ User.hasMany(Cat);
 User.belongsToMany(Cat, { through: "UserFavoriteCats" });
 Cat.belongsToMany(User, { through: "UserFavoriteCats" });
 
-Cat.sync().then(() => {
-  console.log("Cat table created");
-});
+
+Cat.sync({ alter: true })
+  .then(() => {
+    console.log("User table created");
+  })
+  .catch((error) => {
+    console.error("Error creating User table:", error);
+  });

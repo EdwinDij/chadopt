@@ -15,6 +15,10 @@ export const UserFavoriteCats = sequelize.define("UserFavoriteCats", {
 User.belongsToMany(Cat, { through: UserFavoriteCats });
 Cat.belongsToMany(User, { through: UserFavoriteCats });
 
-UserFavoriteCats.sync().then(() => {
-  console.log("UserFavoriteCats table created");
-});
+UserFavoriteCats.sync({ alter: true })
+  .then(() => {
+    console.log("User table created");
+  })
+  .catch((error) => {
+    console.error("Error creating User table:", error);
+  });

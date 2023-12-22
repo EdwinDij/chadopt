@@ -34,6 +34,10 @@ export const User = sequelize.define("user", {
 
 User.belongsToMany(Cat, { through: "UserFavoriteCats" });
 
-User.sync().then(() => {
-  console.log("User table created");
-});
+User.sync({ alter: true })
+  .then(() => {
+    console.log("User table created");
+  })
+  .catch((error) => {
+    console.error("Error creating User table:", error);
+  });
