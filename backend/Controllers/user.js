@@ -28,4 +28,31 @@ export const signup = async (req, res) => {
 
 export const login = async (req, res) => {
   const { email, password } = req.body;
+  User.findOne({ where: { email: email } })
+    .then((user) => {
+      if (!user) {
+        return res.status(401).json({ error: "User not found !" });
+      }
+      bcrypt
+        .compare(password, user.password)
+        .then((valid) => {
+          if (!valid) {
+            return res.status(401).json({ error: "Incorrect password !" });
+          }
+          res.status(200).json({
+            userId: user.id,
+            username: user.username,
+            isAdmin: user.isAdmin,
+            token: jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
+              expiresIn: "24h",
+            }),
+          });
+        })
+        .catch((error) => {
+          res.status(500).json({ error });
+        });
+    })
+    .catch((error) => {
+      res.status(500).json({ error });
+    });
 };
