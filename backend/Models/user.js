@@ -1,6 +1,6 @@
 import { Sequelize, Model, DataTypes } from "sequelize";
-import { sequelize } from "../config/database";
-import { Cat } from "./cat";
+import { sequelize } from "../config/database.js";
+import { Cat } from "./cat.js";
 
 export const User = sequelize.define("user", {
   id: {
@@ -32,7 +32,7 @@ export const User = sequelize.define("user", {
   },
 });
 
-User.belongsToMany(Cat, { through: "UserFavoriteCats" });
+
 
 User.sync({ alter: true })
   .then(() => {
@@ -41,3 +41,4 @@ User.sync({ alter: true })
   .catch((error) => {
     console.error("Error creating User table:", error);
   });
+  User.belongsToMany(Cat, { through: "UserFavoriteCats" });

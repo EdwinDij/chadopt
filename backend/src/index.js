@@ -5,10 +5,13 @@ import { config } from "dotenv";
 config();
 
 import { sequelize } from "../config/database.js";
+import  userRoutes  from "../Routes/user.js";
+import  catRoutes  from "../Routes/cat.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+//middleware de sécurité
 app.use(cors());
 app.use(helmet());
 app.use(express.json());
@@ -31,6 +34,7 @@ app.get("/", (req, res) => {
   res.send("Hello from server!");
 });
 
+//connection à la base de données
 try {
   sequelize.authenticate();
   console.log("Connection has been established successfully.");
@@ -43,5 +47,8 @@ app.listen(
   console.log(`Server running on port: http://localhost:${PORT}`)
 );
 
+//routes
+
+app.use("/auth/user", userRoutes);
 
 export default app;

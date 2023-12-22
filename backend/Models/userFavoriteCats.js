@@ -1,5 +1,7 @@
 import { Sequelize, Model, DataTypes } from "sequelize";
 import { sequelize } from "../config/database";
+import { Cat } from "./cat";
+import { User } from "./user";
 
 export const UserFavoriteCats = sequelize.define("UserFavoriteCats", {
   userId: {
