@@ -93,3 +93,23 @@ export const updateCat = async (req, res) => {
       .json({ message: "vous n'avez pas les droits d'admin", error });
   }
 };
+
+export const adoptCat = async (req, res) => {
+  try {
+    const cat = await Cat.findOne({ where: { id: req.params.id } });
+    const user = await User.findOne({ where: { id: req.user.id } });
+    if (req.user) {
+      Cat.update(
+        {
+          isAdopted: true,
+          adoptedUserId: user.id,
+        },
+        { where: { id: cat.id } }
+      );
+    } else {
+      res.status(400).json({ message: "Vous devez être connecté" });
+    }
+  } catch (error) {
+    res.status(400).json({ error });
+  }
+};

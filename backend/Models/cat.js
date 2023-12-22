@@ -41,9 +41,11 @@ export const Cat = sequelize.define("cat", {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
   },
+  adoptedUserId: {
+    type: DataTypes.UUID,
+    allowNull: true,
+  },
 });
-
-
 
 Cat.sync({ alter: true })
   .then(() => {
@@ -52,4 +54,3 @@ Cat.sync({ alter: true })
   .catch((error) => {
     console.error("Error creating User table:", error);
   });
-  
