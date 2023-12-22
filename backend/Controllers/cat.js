@@ -57,3 +57,16 @@ export const getOneCat = async (req, res) => {
       res.status(400).json({ error });
     });
 };
+
+export const deleteCat = async (req, res) => {
+  try {
+    if (req.user.isAdmin) {
+      await Cat.destroy({ where: { id: req.params.id } });
+      res.status(200).json({ message: "Cat deleted !" });
+    }
+  } catch (error) {
+    res
+      .status(400)
+      .json({ message: "vous n'avez pas les droits d'admin", error });
+  }
+};
