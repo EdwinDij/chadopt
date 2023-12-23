@@ -17,10 +17,18 @@ export const signup = async (req, res) => {
       };
       User.create(signupUser)
         .then(() => {
-          res.status(201).json({ message: "User created !" });
+          res.status(201).json({
+            message: "User created !",
+            creadentials: {
+              email: signupUser.email,
+              username: signupUser.username,
+            },
+          });
         })
         .catch((error) => {
-          res.status(400).json({ message: error });
+          res.status(400).json({
+            message: error,
+          });
         });
     });
   }
