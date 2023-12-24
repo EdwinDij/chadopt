@@ -1,5 +1,7 @@
 import React, { useState, MouseEvent, useEffect } from "react";
 import { useAuth } from "../../useAuth";
+import { useHome } from "../../Pages/Home/useHome";
+
 export const useModalAddCat = () => {
   const [name, setName] = useState<string>("");
   const [birthday, setBirthday] = useState<string>("");
@@ -9,9 +11,10 @@ export const useModalAddCat = () => {
   const [city, setCity] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [status, setStatus] = useState<string>("Adoptable");
-  const [isShown, setIsShown] = useState<boolean>(true);
+  const [isShownOff, setIsShownOff] = useState<boolean>(true);
 
   const auth = useAuth();
+  // const { getAllCatData } = useHome();
 
   const checkInputs = () => {
     if (
@@ -38,24 +41,27 @@ export const useModalAddCat = () => {
     setDescription("");
     setStatus("Adoptable");
   };
+
   const formData = new FormData();
-    formData.append("name", name);
-    formData.append("birthday", birthday);
-    formData.append("description", description);
-    formData.append("city", city);
-    formData.append("sexe", sexe);
-    formData.append("picture", photo);
-    formData.append("race", race);
-    formData.append("isAdopted", status);
+  formData.append("name", name);
+  formData.append("birthday", birthday);
+  formData.append("description", description);
+  formData.append("city", city);
+  formData.append("sexe", sexe);
+  formData.append("picture", photo);
+  formData.append("race", race);
+  formData.append("isAdopted", status);
+
   const addNewCat = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
     const isValid = checkInputs();
-  
+
     if (!isValid) {
       alert("Veuillez remplir tous les champs");
       return;
     }
+
     try {
       const res = await fetch("http://localhost:3000/cat/", {
         method: "POST",
@@ -64,15 +70,17 @@ export const useModalAddCat = () => {
         },
         body: formData,
       });
-      if(res.ok) {
-        console.log(res)
+      if (res.ok) {
+        console.log(res);
         const data = await res.json();
         console.log(data);
         clearInputs();
+        setIsShownOff(false);
       } else {
-        console.error(`Server responded with status ${res.status}: ${res.statusText}`);
+        console.error(
+          `Server responded with status ${res.status}: ${res.statusText}`
+        );
       }
-
     } catch (err) {
       console.error("Error while adding a new cat:", err);
     }
@@ -101,5 +109,6 @@ export const useModalAddCat = () => {
     city,
     description,
     handleFileChange,
+    isShownOff
   };
 };

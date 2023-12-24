@@ -1,7 +1,7 @@
 import React from "react";
 import { useModalAddCat } from "./useModalAddCat";
 
-export const ModalAddCat = ({ setShown, isShown }) => {
+export const ModalAddCat = ({ setShown, isShown, onClose }) => {
   const {
     addNewCat,
     setName,
@@ -18,8 +18,15 @@ export const ModalAddCat = ({ setShown, isShown }) => {
     sexe,
     city,
     description,
-    handleFileChange
+    handleFileChange,
+    isShownOff
   } = useModalAddCat();
+
+  console.log(isShownOff)
+  
+  if (isShownOff === false) {
+    onClose();
+  }
 
   return (
     <div
@@ -39,7 +46,7 @@ export const ModalAddCat = ({ setShown, isShown }) => {
               type="button"
               className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center"
               data-modal-toggle="crud-modal"
-              onClick={() => setShown(!isShown)}
+              onClick={onClose}
             >
               <svg
                 className="w-3 h-3"
@@ -169,7 +176,7 @@ export const ModalAddCat = ({ setShown, isShown }) => {
                   clip-rule="evenodd"
                 ></path>
               </svg>
-              Add new product
+              Ajouter un nouveau chat
             </button>
           </form>
         </div>

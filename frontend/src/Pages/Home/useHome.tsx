@@ -4,22 +4,26 @@ import { CatInfo } from "../../Types";
 export const useHome = () => {
   const [catData, setCatData] = useState<CatInfo[]>([]);
 
-  const getAllCatData = () => {
-    fetch("http://localhost:3000/cat", {
+  const getAllCatData = async () => {
+    const res = await fetch("http://localhost:3000/cat", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        // Ajoutez d'autres en-têtes si nécessaire
       },
-    })
-      .then((response) => response.json())
-      .then((data) => setCatData(data))
-      .catch((error) => console.error("Erreur lors de la requête:", error));
-
+    });
+    const data = await res.json();
+    setCatData(data);
   };
+
   useEffect(() => {
     getAllCatData();
   }, []);
 
-  return { catData };
+  useEffect(() => {
+    console.log("useHome Component re-rendered", catData);
+  }, [catData]);
+
+  console.log("useHome", catData)
+
+  return { catData, getAllCatData, setCatData };
 };
