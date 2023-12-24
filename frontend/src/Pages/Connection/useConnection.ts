@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { Credentials } from "../../Types"
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../useAuth"
 
 export const useConnection = () => {
   const [isLoginForm, setIsLoginForm] = useState<Boolean>(false)
@@ -8,7 +9,10 @@ export const useConnection = () => {
   const [password, setPassword] = useState<string>("")
   const [passwordConfirm, setPasswordConfirm] = useState<string>("")
   const [username, setUsername] = useState<string>("")
+
+  const { login } = useAuth()
   const navigate = useNavigate()
+
   const checkPassword = () => {
     if (password !== passwordConfirm) {
       return false
@@ -92,9 +96,13 @@ export const useConnection = () => {
       })
       const data = await response.json()
       console.log(data)
-      localStorage.setItem("token", data.token)
-      localStorage.setItem("userId", data.userId)
-      localStorage.setItem("username", data.username)
+      login({
+        userId: data.userId,
+        username: data.username,
+        email: data.email,
+        isAdmin: data.isAdmin,
+        token: data.token
+      });
       navigate("/")
 
     }
