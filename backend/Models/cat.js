@@ -38,8 +38,8 @@ export const Cat = sequelize.define("cat", {
     allowNull: true,
   },
   isAdopted: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: false,
+    type: DataTypes.STRING,
+    defaultValue: "Adoptable",
   },
   adoptedUserId: {
     type: DataTypes.UUID,
