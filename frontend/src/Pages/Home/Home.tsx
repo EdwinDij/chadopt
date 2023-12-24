@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import { useAuth } from "../../useAuth";
-import {Modal, ModalAddCat } from "../../Components/"
+import { Modal, ModalAddCat, Card } from "../../Components/";
+import { useHome } from "./useHome";
+import { CatInfo } from "../../Types";
 export function Home() {
   const auth = useAuth();
   const [isShown, setIsShown] = useState<boolean>(false);
-
+  const { catData } = useHome();
+  console.log(catData);
   return (
     <>
       <div>
@@ -18,8 +21,10 @@ export function Home() {
         )}
 
         <section>
-          <div>
-
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+            {catData.map((cat: CatInfo) => (
+              <Card name={cat.name} picture={cat.picture} key={cat.id} id={cat.id} race={cat.race} sexe={cat.sexe} city={cat.city} description={cat.description} status={cat.status} age={0} />
+            ))}
           </div>
         </section>
       </div>

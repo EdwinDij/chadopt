@@ -17,8 +17,8 @@ export const ModalAddCat = ({ setShown, isShown }) => {
     race,
     sexe,
     city,
-    description
-
+    description,
+    handleFileChange
   } = useModalAddCat();
 
   return (
@@ -60,7 +60,7 @@ export const ModalAddCat = ({ setShown, isShown }) => {
             </button>
           </div>
           {/* <!-- Modal body --> */}
-          <form className="p-4 md:p-5">
+          <form className="p-4 md:p-5" encType="multipart/form-data">
             <div className="grid gap-4 mb-4 grid-cols-2">
               <div className="col-span-2">
                 <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
@@ -146,10 +146,16 @@ export const ModalAddCat = ({ setShown, isShown }) => {
                 ></textarea>
               </div>
             </div>
-            <input type="file" name="image" id="photo" className="mb-4" onChange={(e) => setPhoto(e.target.value)} value={photo}/>
+            <input
+              type="file"
+              name="picture"
+              id="picture"
+              className="mb-4"
+              onChange={(e) => handleFileChange(e)}
+            />{" "}
             <button
               className="text-white inline-flex items-center bg-sky-300 hover:bg-pink-400 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                onClick={addNewCat}
+              onClick={addNewCat}
             >
               <svg
                 className="me-1 -ms-1 w-5 h-5"

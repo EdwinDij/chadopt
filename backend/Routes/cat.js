@@ -6,9 +6,9 @@ const router = express.Router();
 
 router.get("/", getAllCats);
 router.get("/:id", getOneCat);
-router.post("/", webToken, upload.single("image"), createCat);
+router.post("/", webToken, upload, createCat);
 router.delete("/:id", webToken, deleteCat)
-router.put("/:id", webToken, upload.single("image"),updateCat)
+router.put("/:id", webToken, upload,updateCat)
 router.put("/adopt/:id", webToken, adoptCat)
 router.get("/adoptedCat", webToken, getAdoptedCats)
 router.post("/addFavoriteCat/:id", webToken, addToFavorites)

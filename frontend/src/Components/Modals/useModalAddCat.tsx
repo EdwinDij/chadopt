@@ -38,11 +38,20 @@ export const useModalAddCat = () => {
     setDescription("");
     setStatus("Adoptable");
   };
-
+  const formData = new FormData();
+    formData.append("name", name);
+    formData.append("birthday", birthday);
+    formData.append("description", description);
+    formData.append("city", city);
+    formData.append("sexe", sexe);
+    formData.append("picture", photo);
+    formData.append("race", race);
+    formData.append("isAdopted", status);
   const addNewCat = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    const isValid = checkInputs();
 
+    const isValid = checkInputs();
+  
     if (!isValid) {
       alert("Veuillez remplir tous les champs");
       return;
@@ -51,29 +60,29 @@ export const useModalAddCat = () => {
       const res = await fetch("http://localhost:3000/cat/", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
           Authorization: "Bearer " + auth?.user?.token,
         },
-        body: JSON.stringify({
-          name: name,
-          birthday: birthday,
-          description: description,
-          city: city,
-          sexe: sexe,
-          picture: photo,
-          race: race,
-          isAdopted: status,
-        }),
+        body: formData,
       });
-      const data = await res.json();
-      console.log(data);
-      clearInputs();
+      if(res.ok) {
+        console.log(res)
+        const data = await res.json();
+        console.log(data);
+        clearInputs();
+      } else {
+        console.error(`Server responded with status ${res.status}: ${res.statusText}`);
+      }
+
     } catch (err) {
       console.error("Error while adding a new cat:", err);
     }
   };
 
-
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    console.log(file);
+    setPhoto(file);
+  };
   return {
     addNewCat,
     setName,
@@ -91,5 +100,6 @@ export const useModalAddCat = () => {
     sexe,
     city,
     description,
+    handleFileChange,
   };
 };

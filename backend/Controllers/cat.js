@@ -2,8 +2,11 @@ import { Cat } from "../Models/cat.js";
 import { User } from "../Models/user.js";
 
 export const createCat = async (req, res) => {
-  const { name, birthday, description, sexe, city, picture, race, isAdopted } =
-    req.body;
+  const { name, birthday, description, sexe, city, race, isAdopted } = req.body;
+
+ const picture = req.file
+    ? `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
+    : null;
 
   try {
     if (req.user.isAdmin) {
@@ -13,7 +16,7 @@ export const createCat = async (req, res) => {
         description,
         sexe,
         city,
-        picture,
+        picture: picture,
         race,
         isAdopted,
       });
@@ -37,6 +40,7 @@ export const getAllCats = async (req, res) => {
     .catch((error) => {
       res.status(400).json({ error });
     });
+    
 };
 
 export const getOneCat = async (req, res) => {

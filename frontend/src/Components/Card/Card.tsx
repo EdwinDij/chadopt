@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { CatInfo } from "../../Types";
 import { Modal } from "../Modals";
 
-export const Card = ({name, photo }:CatInfo) => {
-
+export const Card = ({name, picture, description, sexe, id, race, city, status  }:CatInfo) => {
+console.log("picture", picture)
 const [isShown, setIsShown] = useState(false);
 
   return (
@@ -11,7 +11,7 @@ const [isShown, setIsShown] = useState(false);
       <a href="#">
         <img
           className="rounded-t-lg"
-          src={photo}
+          src={picture}
           alt={name}
         />
       </a>
