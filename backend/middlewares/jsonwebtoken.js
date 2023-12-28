@@ -8,8 +8,8 @@ export const webToken = (req, res, next) => {
     const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
     const userId = decodedToken.userId;
     const isAdmin = decodedToken.isAdmin;
-    console.log("isAdmin", isAdmin);
     
+
     if (req.body.id && req.body.id !== userId) {
       throw "Invalid user ID or not Admin!";
     } else if (!isAdmin) {

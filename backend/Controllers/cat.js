@@ -2,9 +2,9 @@ import { Cat } from "../Models/cat.js";
 import { User } from "../Models/user.js";
 
 export const createCat = async (req, res) => {
-  const { name, birthday, description, sexe, city, race, isAdopted } = req.body;
+  const { name, birthday, description, sexe, city, race, status } = req.body;
 
- const picture = req.file
+  const picture = req.file
     ? `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
     : null;
 
@@ -18,7 +18,7 @@ export const createCat = async (req, res) => {
         city,
         picture: picture,
         race,
-        isAdopted,
+        status,
       });
 
       res.status(201).json({ message: "Cat created", cat });
@@ -40,7 +40,6 @@ export const getAllCats = async (req, res) => {
     .catch((error) => {
       res.status(400).json({ error });
     });
-    
 };
 
 export const getOneCat = async (req, res) => {
@@ -57,7 +56,7 @@ export const deleteCat = async (req, res) => {
   try {
     if (req.user.isAdmin) {
       await Cat.destroy({ where: { id: req.params.id } });
-      res.status(200).json({ message: "Cat deleted !" });
+      res.status(200).json({ message: "Cat deleted !", status: 200 });
     }
   } catch (error) {
     res
@@ -67,7 +66,7 @@ export const deleteCat = async (req, res) => {
 };
 
 export const updateCat = async (req, res) => {
-  const { name, birthday, description, sexe, city, picture, race, isAdopted } =
+  const { name, birthday, description, sexe, city, picture, race, status } =
     req.body;
   try {
     if (req.user.isAdmin) {
@@ -80,12 +79,12 @@ export const updateCat = async (req, res) => {
           city: city,
           picture: picture,
           race: race,
-          isAdopted: isAdopted,
+          status: status,
         },
         { where: { id: req.params.id } }
       )
         .then(() => {
-          res.status(200).json({ message: "Cat updated !" });
+          res.status(200).json({ message: "Cat updated !", status: 200 });
         })
         .catch((error) => {
           res.status(400).json({ error });
@@ -99,59 +98,80 @@ export const updateCat = async (req, res) => {
 };
 
 export const adoptCat = async (req, res) => {
+  const { userId, cancel } = req.body;
+
   try {
-    const cat = await Cat.findOne({ where: { id: req.params.id } });
-    const user = await User.findOne({ where: { id: req.user.id } });
-    if (req.user) {
-      Cat.update(
-        {
-          isAdopted: true,
-          adoptedUserId: user.id,
-        },
-        { where: { id: cat.id } }
-      );
+    const user = await User.findOne({ where: { id: userId } });
+    if (user) {
+      const updateValues = {};
+
+      if (cancel === "Adoptable") {
+        updateValues.status = "Adoptable";
+        updateValues.requestUserId = [];
+      } else {
+        updateValues.status = "demande en cours";
+        updateValues.requestUserId = [user.id];
+      }
+
+      Cat.update(updateValues, { where: { id: req.params.id } })
+        .then(() => {
+          res.status(200).json({ message: "Cat updated !", status: 200 });
+        })
+        .catch((error) => {
+          res.status(400).json({ error });
+        });
     } else {
       res.status(400).json({ message: "Vous devez être connecté" });
     }
   } catch (error) {
-    res.status(400).json({ error });
+    res.status(400).json({ error, message: "erreur" });
   }
 };
 
 export const getAdoptedCats = async (req, res) => {
   try {
-    const cats = await Cat.findAll({ where: { isAdopted: true } });
+    const cats = await Cat.findAll({ where: { status: true } });
     res.status(200).json(cats);
   } catch (error) {
     res.status(400).json({ error });
   }
 };
 
+// ...
+
 export const addToFavorites = async (req, res) => {
+  const { userId } = req.body;
+
   try {
     const cat = await Cat.findOne({ where: { id: req.params.id } });
-    const user = await User.findOne({ where: { id: req.user.id } });
-    if (req.user) {
-      const isCatInFavorites = user.favoriteCats.includes(cat.id);
-      //si le chat est déjà dans les favoris de l'utilisateur alors on le retire
-      if (isCatInFavorites) {
-        user.favoriteCats = user.favoriteCats.filter(
-          (favoriteCat) => favoriteCat !== cat.id
+    const user = await User.findOne({ where: { id: userId } });
+
+    if (user && cat) {
+      const isFavorite = cat.favoriteUserId.includes(user.id);
+
+      if (isFavorite) {
+        const updatedFavoriteUsers = cat.favoriteUserId.filter(
+          (id) => id !== user.id
         );
-        return res
-          .status(400)
-          .json({ message: "Cat is no longer in favorite" });
+
+        await Cat.update(
+          { favoriteUserId: updatedFavoriteUsers },
+          { where: { id: req.params.id } }
+        );
+
+        res.status(200).json({ message: "Cat removed from fav!", status: 200 });
+        return;
       }
 
-      // Ajouter le chat aux favoris de l'utilisateur
-      user.favoriteCats.push(cat.id);
+      const updatedFavoriteUsers = [...cat.favoriteUserId, user.id];
 
-      // Mettre à jour l'utilisateur avec les nouveaux favoris
-      await user.save();
+      await Cat.update(
+        { favoriteUserId: updatedFavoriteUsers },
+        { where: { id: req.params.id } }
+      );
 
-      res.status(200).json({ message: "Cat added to favorites", user });
-    } else {
-      res.status(400).json({ message: "Vous devez être connecté" });
+      res.status(200).json({ message: "Cat added to fav!", status: 200 });
+      return;
     }
   } catch (error) {
     res.status(400).json({ error });

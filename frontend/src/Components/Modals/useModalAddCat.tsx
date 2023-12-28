@@ -50,7 +50,7 @@ export const useModalAddCat = () => {
   formData.append("sexe", sexe);
   formData.append("picture", photo);
   formData.append("race", race);
-  formData.append("isAdopted", status);
+  formData.append("status", status);
 
   const addNewCat = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -109,6 +109,6 @@ export const useModalAddCat = () => {
     city,
     description,
     handleFileChange,
-    isShownOff
+    isShownOff,
   };
 };

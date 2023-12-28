@@ -1,29 +1,80 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useModalAddCat } from "./useModalAddCat";
+import { useAuth } from "../../useAuth";
+export const ModalUpdate = ({ onClose, id }) => {
+  const { handleFileChange } = useModalAddCat();
 
-export const ModalAddCat = ({ onClose }) => {
-  const {
-    addNewCat,
-    setName,
-    setBirthday,
-    setRace,
-    setSexe,
-    setCity,
-    setDescription,
-    name,
-    birthday,
-    race,
-    sexe,
-    city,
-    description,
-    handleFileChange,
-    isShownOff,
-  } = useModalAddCat();
+  console.log(id)
 
-  if (isShownOff === false) {
-    onClose();
-  }
+  const [name, setName] = useState<string>("");
+  const [birthday, setBirthday] = useState<string>("");
+  const [photo, setPhoto] = useState<string>("");
+  const [race, setRace] = useState<string>("");
+  const [sexe, setSexe] = useState<string>("");
+  const [city, setCity] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
+  const [status, setStatus] = useState<string>("Adoptable");
+  const auth = useAuth();
+  
+  const getOneCatData = async (id: string) => {
+    try {
+      const res = await fetch(`http://localhost:3000/cat/${id}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await res.json();
+      console.log(data);
+      setName(data.name);
+      setBirthday(data.birthday);
+      setPhoto(data.picture);
+      setRace(data.race);
+      setSexe(data.sexe);
+      setCity(data.city);
+      setDescription(data.description);
+      setStatus(data.status);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    getOneCatData(id);
+  }, []);
 
+  const formData = new FormData();
+  formData.append("name", name);
+  formData.append("birthday", birthday);
+  formData.append("description", description);
+  formData.append("city", city);
+  formData.append("sexe", sexe);
+  formData.append("picture", photo);
+  formData.append("status", status);
+  formData.append("race", race);
+
+  const updateCat = async (
+    id: string,
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    e.preventDefault();
+    try {
+      const res = await fetch(`http://localhost:3000/cat/${id}`, {
+        method: "PUT",
+        headers: {
+          Authorization: "Bearer " + auth?.user?.token,
+        },
+        body: formData,
+      });
+      const data = await res.json();
+      console.log(data);
+      if (data.status === 200) {
+        onClose();
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+ 
   return (
     <div
       id="crud-modal"
@@ -36,7 +87,7 @@ export const ModalAddCat = ({ onClose }) => {
           {/* <!-- Modal header --> */}
           <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-              Ajouter un chat
+              Modifier un chat
             </h3>
             <button
               type="button"
@@ -73,7 +124,7 @@ export const ModalAddCat = ({ onClose }) => {
                   type="text"
                   name="name"
                   id="name"
-                  value={name}
+                  defaultValue={name}
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                   placeholder="Nom du chat"
                   onChange={(e) => setName(e.target.value)}
@@ -104,7 +155,6 @@ export const ModalAddCat = ({ onClose }) => {
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                   onChange={(e) => setSexe(e.target.value)}
                 >
-                  <option value="">Choisissez le sexe</option>
                   <option value="Femelle">Femelle</option>
                   <option value="Mâle">Mâle</option>
                 </select>
@@ -135,7 +185,21 @@ export const ModalAddCat = ({ onClose }) => {
                   onChange={(e) => setBirthday(e.target.value)}
                 />
               </div>
-
+              <div className="col-span-2 sm:col-span-1">
+                <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                  Status
+                </label>
+                <select
+                  id="category"
+                  value={status}
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                  onChange={(e) => setStatus(e.target.value)}
+                >
+                  <option value="Adopté">Adopté</option>
+                  <option value="demande en cours">Demande en cours</option>
+                  <option value="Adoptable">Adoptable</option>
+                </select>
+              </div>
               <div className="col-span-2">
                 <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                   Description
@@ -158,7 +222,7 @@ export const ModalAddCat = ({ onClose }) => {
             />{" "}
             <button
               className="text-white inline-flex items-center bg-sky-300 hover:bg-pink-400 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-              onClick={addNewCat}
+              onClick={(e) => updateCat(id, e)}
             >
               <svg
                 className="me-1 -ms-1 w-5 h-5"
@@ -172,7 +236,7 @@ export const ModalAddCat = ({ onClose }) => {
                   clip-rule="evenodd"
                 ></path>
               </svg>
-              Ajouter un nouveau chat
+              Modifier le chat
             </button>
           </form>
         </div>

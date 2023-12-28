@@ -25,11 +25,6 @@ export const User = sequelize.define("user", {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
   },
-  favoriteCats: {
-    type: DataTypes.ARRAY(DataTypes.STRING),
-    defaultValue: [],
-    allowNull: true,
-  },
 });
 
 

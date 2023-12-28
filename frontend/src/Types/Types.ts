@@ -9,11 +9,12 @@ export type Credentials = {
 export type CatInfo = {
   id: string,
   name: string,
-  age: number,
   race: string,
   sexe: string,
   city: string,
+  birthday: string,
   description: string,
   picture: string,
   status: string,
+  requestUserId: string,
 }

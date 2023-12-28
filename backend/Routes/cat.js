@@ -9,7 +9,7 @@ router.get("/:id", getOneCat);
 router.post("/", webToken, upload, createCat);
 router.delete("/:id", webToken, deleteCat)
 router.put("/:id", webToken, upload,updateCat)
-router.put("/adopt/:id", webToken, adoptCat)
+router.patch("/adopt/:id", adoptCat) // pour les users qui souhaite faire une demande d'adoption
 router.get("/adoptedCat", webToken, getAdoptedCats)
-router.post("/addFavoriteCat/:id", webToken, addToFavorites)
+router.put("/addFavoriteCat/:id",  addToFavorites)
 export default router;

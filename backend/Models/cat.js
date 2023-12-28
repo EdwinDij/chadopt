@@ -1,6 +1,5 @@
 import { Sequelize, Model, DataTypes } from "sequelize";
 import { sequelize } from "../config/database.js";
-import { User } from "./user.js";
 
 export const Cat = sequelize.define("cat", {
   id: {
@@ -37,12 +36,22 @@ export const Cat = sequelize.define("cat", {
     type: DataTypes.STRING,
     allowNull: true,
   },
-  isAdopted: {
+  status: {
     type: DataTypes.STRING,
     defaultValue: "Adoptable",
   },
   adoptedUserId: {
     type: DataTypes.UUID,
+    allowNull: true,
+  },
+  requestUserId: {
+    type: DataTypes.ARRAY(DataTypes.UUID),
+    defaultValue: [],
+    allowNull: true,
+  },
+  favoriteUserId: {
+    type: DataTypes.ARRAY(DataTypes.UUID),
+    defaultValue: [],
     allowNull: true,
   },
 });
